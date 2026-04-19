@@ -1,0 +1,22 @@
+{
+  "name": "3PEAK",
+  "short_name": "3PEAK",
+  "description": "매일 3개의 정상을 정복하라",
+  "start_url": "/3peak/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F5F7",
+  "theme_color": "#6B63D4",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Mountain/3D/mountain_3d.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Mountain/3D/mountain_3d.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

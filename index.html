@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -170,6 +169,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Ne
       <button class="mdl-save" onclick="saveMemo()">저장</button>
     </div>
   </div>
+
+<!-- ★ 미션 편집 모달 -->
+<div class="mbg" id="mission-modal">
+  <div class="mdl">
+    <div style="font-size:19px;font-weight:700;letter-spacing:-.4px">미션 편집 ✏️</div>
+    <div style="font-size:13px;color:var(--txt2);margin-top:3px">핵심 미션과 보너스 미션 이름을 바꿀 수 있어요.</div>
+    <div style="margin-top:14px">
+      <div style="font-size:11px;font-weight:500;color:var(--txt3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">핵심 3 미션</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">🤖</span><input id="me-n1" style="flex:1;font-size:14px;border:0.5px solid #D1D1D6;border-radius:8px;padding:8px 11px;font-family:inherit;background:var(--bg);color:var(--txt);outline:none" placeholder="AI 공부 or 앱 기획 1시간"></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">✏️</span><input id="me-n2" style="flex:1;font-size:14px;border:0.5px solid #D1D1D6;border-radius:8px;padding:8px 11px;font-family:inherit;background:var(--bg);color:var(--txt);outline:none" placeholder="글쓰기 & 토론 노션 정리"></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">🏸</span><input id="me-n3" style="flex:1;font-size:14px;border:0.5px solid #D1D1D6;border-radius:8px;padding:8px 11px;font-family:inherit;background:var(--bg);color:var(--txt);outline:none" placeholder="배드민턴 레슨 & 운동"></div>
+      </div>
+      <div style="font-size:11px;font-weight:500;color:var(--txt3);letter-spacing:.08em;text-transform:uppercase;margin:12px 0 8px">보너스 미션</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">🐶</span><input id="me-b1" style="flex:1;font-size:14px;border:0.5px solid #D1D1D6;border-radius:8px;padding:8px 11px;font-family:inherit;background:var(--bg);color:var(--txt);outline:none" placeholder="뭉치 산책"></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">📈</span><input id="me-b2" style="flex:1;font-size:14px;border:0.5px solid #D1D1D6;border-radius:8px;padding:8px 11px;font-family:inherit;background:var(--bg);color:var(--txt);outline:none" placeholder="투자 & 사업 리뷰"></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">💧</span><input id="me-b3" style="flex:1;font-size:14px;border:0.5px solid #D1D1D6;border-radius:8px;padding:8px 11px;font-family:inherit;background:var(--bg);color:var(--txt);outline:none" placeholder="물 2L & 수면 7시간"></div>
+      </div>
+    </div>
+    <div class="mdl-btns">
+      <button class="mdl-cancel" onclick="closeMissionModal()">취소</button>
+      <button class="mdl-save" onclick="saveMissionNames()">저장</button>
+    </div>
+  </div>
+</div>
+
 </div>
 
 <div class="wrap">
@@ -224,7 +250,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Ne
 
     <!-- 핵심 3 미션 -->
     <div class="card">
-      <div class="sl">핵심 3 미션</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="sl" style="margin-bottom:0">핵심 3 미션</div>
+        <button onclick="openMissionModal()" style="background:transparent;border:0.5px solid #D1D1D6;color:var(--txt2);border-radius:8px;padding:4px 11px;font-size:12px;cursor:pointer;font-family:inherit">편집</button>
+      </div>
       <div class="mr">
         <div class="chk" id="c1" onclick="tog(1)"><svg width="13" height="13" viewBox="0 0 13 13"><polyline points="2,6.5 5.5,10 11,3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <span style="font-size:18px;width:26px;text-align:center;flex-shrink:0">🤖</span>
@@ -295,8 +324,38 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Ne
 
     <!-- 이번 주 -->
     <div class="card">
-      <div class="sl">이번 주</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="sl" style="margin-bottom:0">이번 주</div>
+        <span style="font-size:11px;color:var(--txt3)" id="streak-count">연속 0일</span>
+      </div>
       <div style="display:flex;gap:5px" id="streak-row"></div>
+    </div>
+
+    <!-- ★ 월별 달성 캘린더 -->
+    <div class="card" id="cal-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="sl" style="margin-bottom:0">월별 달성 기록</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button onclick="prevMonth()" style="background:transparent;border:0.5px solid #D1D1D6;color:var(--txt2);border-radius:6px;padding:3px 8px;font-size:13px;cursor:pointer">‹</button>
+          <span style="font-size:13px;font-weight:500;color:var(--txt)" id="cal-title"></span>
+          <button onclick="nextMonth()" style="background:transparent;border:0.5px solid #D1D1D6;color:var(--txt2);border-radius:6px;padding:3px 8px;font-size:13px;cursor:pointer">›</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px">
+        <div style="text-align:center;font-size:10px;color:var(--txt3);padding:2px">월</div>
+        <div style="text-align:center;font-size:10px;color:var(--txt3);padding:2px">화</div>
+        <div style="text-align:center;font-size:10px;color:var(--txt3);padding:2px">수</div>
+        <div style="text-align:center;font-size:10px;color:var(--txt3);padding:2px">목</div>
+        <div style="text-align:center;font-size:10px;color:var(--txt3);padding:2px">금</div>
+        <div style="text-align:center;font-size:10px;color:var(--txt3);padding:2px">토</div>
+        <div style="text-align:center;font-size:10px;color:var(--txt3);padding:2px">일</div>
+      </div>
+      <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px"></div>
+      <div style="display:flex;gap:10px;margin-top:10px;font-size:11px;color:var(--txt3)">
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:50%;background:#6B63D4"></div>풀콤보</div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:50%;background:#AFA9EC"></div>부분달성</div>
+        <div style="display:flex;align-items:center;gap:4px"><div style="width:10px;height:10px;border-radius:50%;background:#E5E5EA"></div>미달성</div>
+      </div>
     </div>
 
     <!-- 오늘의 메모 -->
@@ -382,19 +441,50 @@ const COND_LABELS=['최상 🔥','좋음 😊','보통 🙂','피곤 😴'];
 
 let rew=[{lv:10,g:'카페 상품권 1만원',m:'첫 보상! 커피 한 잔으로 자축하세요.'},{lv:20,g:'책 구매권',m:'지식이 쌓이는 만큼 책도 늘려요.'},{lv:35,g:'배드민턴화 구매권',m:'장비도 레벨업!'},{lv:50,g:'의류 쇼핑 상품권 5만원',m:'나에게 선물할 자격이 충분해요.'},{lv:65,g:'외식 or 소규모 여행',m:'중간 휴식도 보상이에요.'},{lv:80,g:'고급 악세서리 or 가전',m:'정상이 눈앞이에요!'},{lv:100,g:'아이폰 — 최고 보상',m:'당신은 진짜 해냈습니다. 레전드!'}];
 
-function load(){try{return JSON.parse(localStorage.getItem('3peak')||'{}')}catch{return{}}}
-function save(){localStorage.setItem('3peak',JSON.stringify({mD,bD,todos,todayMemo,streakDone,condIdx,savedToday}))}
+function getTodayStr(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+
+function load(){
+  try{
+    const raw=JSON.parse(localStorage.getItem('3peak')||'{}');
+    const today=getTodayStr();
+    /* 날짜가 바뀌면 오늘 미션 데이터만 초기화, 누적 데이터(XP 히스토리 등)는 유지 */
+    if(raw.lastDate && raw.lastDate !== today){
+      raw.mD=[0,0,0];
+      raw.bD=[0,0,0];
+      raw.todos=(raw.todos||[]).filter(t=>!t.done); /* 완료 안 된 것만 유지 */
+      raw.todayMemo='';
+      raw.savedToday=false;
+      raw.lastDate=today;
+      localStorage.setItem('3peak',JSON.stringify(raw));
+    }
+    if(!raw.lastDate){raw.lastDate=today;}
+    return raw;
+  }catch{return{};}
+}
+
+function save(){
+  const today=getTodayStr();
+  localStorage.setItem('3peak',JSON.stringify({mD,bD,todos,todayMemo,streakDone,condIdx,savedToday,lastDate:today,missionNames,bonusNames,calHistory}));
+}
 
 let s=load();
 let mD=s.mD||[0,0,0];
 let bD=s.bD||[0,0,0];
 let todos=s.todos||[];
 let todayMemo=s.todayMemo||'';
-let streakDone=s.streakDone||[true,true,true,true,false,false,false];
+/* 스트릭: 오늘을 기준으로 최근 7일 달성 여부 자동 계산 */
+let streakDone=s.streakDone||[false,false,false,false,false,false,false];
 let condIdx=s.condIdx!==undefined?s.condIdx:1;
 let savedToday=s.savedToday||false;
 let fullDone=mD.every(Boolean);
 let editMode=false;
+/* 미션 이름 커스텀 */
+let missionNames=s.missionNames||['AI 공부 or 앱 기획 1시간','글쓰기 & 토론 노션 정리','배드민턴 레슨 & 운동'];
+let bonusNames=s.bonusNames||['뭉치 산책','투자 & 사업 리뷰','물 2L & 수면 7시간'];
+/* 캘린더 히스토리 {날짜:'full'|'partial'|''} */
+let calHistory=s.calHistory||{};
+let calYear=new Date().getFullYear();
+let calMonth=new Date().getMonth();
 let qi=Math.floor(Math.random()*QQ.length);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 
@@ -413,19 +503,20 @@ function initCond(){document.querySelectorAll('.cond-chip').forEach((c,i)=>c.cla
 
 /* 스트릭 */
 function renderStreak(){
-  const row=document.getElementById('streak-row');row.innerHTML='';
-  const todayIdx=new Date().getDay();const map=[1,2,3,4,5,6,0];
-  DAYS.forEach((d,i)=>{
-    const isToday=map[i]===todayIdx;
+  const row=document.getElementById('streak-row');if(!row)return;row.innerHTML='';
+  const todayDow=new Date().getDay(); /* 0=일,1=월,...,6=토 */
+  const weekDays=['월','화','수','목','금','토','일'];
+  const weekDowIdx=[1,2,3,4,5,6,0];
+  weekDays.forEach((d,i)=>{
+    const isToday=weekDowIdx[i]===todayDow;
     const div=document.createElement('div');div.className='sd';
-    if(streakDone[i])div.style.cssText='background:#6B63D4;color:#fff';
-    else if(isToday)div.style.cssText='border:1.5px solid #6B63D4;color:#6B63D4;font-weight:600';
-    else div.style.cssText='background:#E5E5EA;color:#AEAEB2';
+    if(streakDone[i]&&isToday){div.style.cssText='background:#6B63D4;color:#fff;border:2px solid #3C3489';}
+    else if(streakDone[i]){div.style.cssText='background:#6B63D4;color:#fff';}
+    else if(isToday){div.style.cssText='border:1.5px solid #6B63D4;color:#6B63D4;font-weight:600';}
+    else{div.style.cssText='background:#E5E5EA;color:#AEAEB2';}
     div.textContent=d;row.appendChild(div);
   });
 }
-
-/* 축하 */
 function celebrate(msg,big){
   const cm=document.getElementById('cmsg'),cel=document.getElementById('cel');
   for(let i=0;i<(big?18:10);i++){
@@ -474,13 +565,20 @@ function ui(){
   document.getElementById('s-td').textContent=todos.filter(t=>t.done).length;
   [1,2,3].forEach(n=>{
     document.getElementById('c'+n).classList.toggle('dp',!!mD[n-1]);
-    document.getElementById('n'+n).classList.toggle('dd',!!mD[n-1]);
+    const nEl=document.getElementById('n'+n);
+    nEl.classList.toggle('dd',!!mD[n-1]);
+    nEl.textContent=missionNames[n-1]||nEl.textContent;
     document.getElementById('b'+n).classList.toggle('dg',!!bD[n-1]);
-    document.getElementById('bn'+n).classList.toggle('dd',!!bD[n-1]);
+    const bEl=document.getElementById('bn'+n);
+    bEl.classList.toggle('dd',!!bD[n-1]);
+    bEl.textContent=bonusNames[n-1]||bEl.textContent;
   });
+  /* 연속 달성일 카운트 */
+  const sc=document.getElementById('streak-count');
+  if(sc){const cnt=streakDone.filter(Boolean).length;sc.textContent='연속 '+cnt+'일';}
   if(todayMemo){document.getElementById('memo-disp').textContent=todayMemo;document.getElementById('memo-area').style.display='block';}
   updateSaveBtn();
-  renderRew(lv);renderTodos();renderStreak();initCond();
+  renderRew(lv);renderTodos();renderStreak();initCond();renderCalendar();
 }
 
 /* 저장 버튼 상태 */
@@ -501,14 +599,14 @@ function updateSaveBtn(){
 function saveToNotion(){
   if(savedToday){alert('오늘은 이미 저장했어요!\n노션 캘린더에서 확인하세요.');return;}
   const d=new Date();
-  const COND=['최상 🔥','좋음 😊','보통 🙂','피곤 😴'];
+  const dateStr=d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일';
+  const xp=calcXP();
   const dn=mD.filter(Boolean).length;
   const full=mD.every(Boolean);
   const tdDone=todos.filter(t=>t.done).length;
-  const xp=calcXP();
   const msg=[
     '📊 3PEAK 오늘 기록 저장 요청',
-    '날짜: '+d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일',
+    '날짜: '+dateStr,
     '🤖 AI & 기획: '+(mD[0]?'✓':'✗'),
     '✏️ 글쓰기 & 토론: '+(mD[1]?'✓':'✗'),
     '🏸 배드민턴 & 운동: '+(mD[2]?'✓':'✗'),
@@ -519,18 +617,38 @@ function saveToNotion(){
     '💧 물 & 수면: '+(bD[2]?'✓':'✗'),
     '오늘 XP: '+xp,
     'To-do 완료: '+tdDone+'개',
-    '컨디션: '+COND[condIdx],
+    '컨디션: '+COND_LABELS[condIdx],
     '오늘의 메모: '+(todayMemo||'없음'),
   ].join('\n');
-  navigator.clipboard.writeText(msg).then(()=>{
-    savedToday=true;save();updateSaveBtn();
-    celebrate('클립보드 복사 완료! Claude에 붙여넣기 해주세요 📋',false);
-  }).catch(()=>{
-    alert('아래 내용을 Claude에 전달해주세요:\n\n'+msg);
-  });
+
+  // Claude.ai 채팅에 메시지 전송 시도
+  if(typeof sendPrompt === 'function'){
+    sendPrompt(msg);
+    savedToday=true;
+    /* 오늘 요일 인덱스로 스트릭 업데이트 */
+    const todayDow2=new Date().getDay();
+    const dowToStreakIdx=[6,0,1,2,3,4,5];
+    streakDone[dowToStreakIdx[todayDow2]]=true;
+    /* 캘린더 히스토리 업데이트 */
+    const todayKey=getTodayStr();
+    const dn2=mD.filter(Boolean).length;
+    calHistory[todayKey]=dn2===3?'full':dn2>0?'partial':'none';
+    save();updateSaveBtn();renderStreak();renderCalendar();
+  } else {
+    // 앱(standalone)에서는 클립보드에 복사 후 안내
+    navigator.clipboard.writeText(msg).then(()=>{
+      savedToday=true;save();updateSaveBtn();
+      celebrate('클립보드 복사 완료! Claude에 붙여넣기 해주세요 📋',false);
+      setTimeout(()=>{
+        alert('✓ 오늘 기록이 클립보드에 복사됐어요!\n\nClaude 앱을 열고 붙여넣기(길게 누르기)하면\n노션에 자동 저장해드려요.');
+      },800);
+    }).catch(()=>{
+      alert('아래 내용을 Claude에 전달해주세요:\n\n'+msg);
+    });
+  }
 }
 
-
+/* 미션 */
 const MPOOLS=[MA,MW,MS];
 function tog(n){
   const i=n-1,was=mD.every(Boolean);
@@ -612,6 +730,76 @@ function sw(name){
   });
 }
 function handleAv(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{document.getElementById('av-img').src=ev.target.result;document.getElementById('av-img').style.display='block';document.getElementById('av-em').style.display='none';};r.readAsDataURL(f);}
+
+/* ── 미션 이름 편집 ── */
+function openMissionModal(){
+  document.getElementById('me-n1').value=missionNames[0];
+  document.getElementById('me-n2').value=missionNames[1];
+  document.getElementById('me-n3').value=missionNames[2];
+  document.getElementById('me-b1').value=bonusNames[0];
+  document.getElementById('me-b2').value=bonusNames[1];
+  document.getElementById('me-b3').value=bonusNames[2];
+  document.getElementById('mission-modal').classList.add('show');
+}
+function closeMissionModal(){document.getElementById('mission-modal').classList.remove('show');}
+function saveMissionNames(){
+  const n1=document.getElementById('me-n1').value.trim();
+  const n2=document.getElementById('me-n2').value.trim();
+  const n3=document.getElementById('me-n3').value.trim();
+  const b1=document.getElementById('me-b1').value.trim();
+  const b2=document.getElementById('me-b2').value.trim();
+  const b3=document.getElementById('me-b3').value.trim();
+  if(n1)missionNames[0]=n1;
+  if(n2)missionNames[1]=n2;
+  if(n3)missionNames[2]=n3;
+  if(b1)bonusNames[0]=b1;
+  if(b2)bonusNames[1]=b2;
+  if(b3)bonusNames[2]=b3;
+  save();closeMissionModal();ui();
+}
+
+/* ── 월별 캘린더 ── */
+function renderCalendar(){
+  const grid=document.getElementById('cal-grid');
+  const title=document.getElementById('cal-title');
+  if(!grid||!title)return;
+  const monthNames=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+  title.textContent=calYear+'년 '+monthNames[calMonth];
+  grid.innerHTML='';
+  const firstDay=new Date(calYear,calMonth,1).getDay(); /* 0=일 */
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  /* 월요일 시작 — 첫날 빈칸 */
+  const offset=(firstDay===0?6:firstDay-1);
+  for(let i=0;i<offset;i++){
+    const blank=document.createElement('div');
+    blank.style.cssText='height:30px';
+    grid.appendChild(blank);
+  }
+  const today=new Date();
+  const todayStr=getTodayStr();
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=calYear+'-'+(calMonth+1)+'-'+d;
+    const isToday=calYear===today.getFullYear()&&calMonth===today.getMonth()&&d===today.getDate();
+    const hist=calHistory[dateStr];
+    const isFuture=new Date(calYear,calMonth,d)>today;
+    const div=document.createElement('div');
+    div.style.cssText='height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;cursor:default;';
+    if(isFuture){
+      div.style.cssText+='color:var(--txt3)';
+    }else if(hist==='full'){
+      div.style.cssText+='background:#6B63D4;color:#fff';
+    }else if(hist==='partial'){
+      div.style.cssText+='background:#AFA9EC;color:#3C3489';
+    }else{
+      div.style.cssText+='background:#F5F5F7;color:var(--txt3)';
+    }
+    if(isToday){div.style.outline='2px solid #6B63D4';div.style.outlineOffset='1px';}
+    div.textContent=d;
+    grid.appendChild(div);
+  }
+}
+function prevMonth(){if(calMonth===0){calMonth=11;calYear--;}else calMonth--;renderCalendar();}
+function nextMonth(){const now=new Date();if(calYear>now.getFullYear()||(calYear===now.getFullYear()&&calMonth>=now.getMonth()))return;if(calMonth===11){calMonth=0;calYear++;}else calMonth++;renderCalendar();}
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
 
